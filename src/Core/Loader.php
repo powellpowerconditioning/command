@@ -56,7 +56,7 @@ class Loader
                 shuffle($answers);
             }
 
-            $questions[$random] = new Question($item['question'], $item['category'], $answers);
+            $questions[$random] = new Question($item['question'], $item['category'], $answers, isset($item['description']) ? $item['description'] : null);
         }
 
         return new Set($questions);
