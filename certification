@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Certification\Command\StartCommand;
+use Symfony\Component\Console\Application;
+
+const APPLICATION_NAME = 'Certification';
+
+$application = new Application(APPLICATION_NAME);
+
+$startCommand = new StartCommand('start', __DIR__.'/app');
+$application->add($startCommand);
+$application->setDefaultCommand($startCommand->getName());
+
+$application->run();
