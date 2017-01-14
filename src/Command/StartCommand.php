@@ -23,7 +23,7 @@ class StartCommand extends Command
     /**
      * @var integer
      */
-    const WORDWRAP_NUMBER = 80;
+    const WORDWRAP_NUMBER = 200;
 
     private $path;
     
@@ -74,7 +74,7 @@ class StartCommand extends Command
             $this->askQuestions($set, $input, $output);
             $this->displayResults($set, $output);
         } else {
-            $output->writeln('<error>✗</error> No questions can be found.');
+            $output->writeln('<fg=red>✗</> No questions can be found.');
         }
     }
 
@@ -110,6 +110,7 @@ class StartCommand extends Command
             $answer = $questionHelper->ask($input, $output, $choiceQuestion);
 
             $answers = true === $multiSelect ? $answer : array($answer);
+
             $answer  = true === $multiSelect ? implode(', ', $answer) : $answer;
 
             $set->setAnswer($i, $answers);
@@ -146,8 +147,24 @@ class StartCommand extends Command
             $results[] = array(
                 sprintf('<comment>#%d</comment> %s', $questionCount++, $label),
                 wordwrap(implode(', ', $question->getCorrectAnswersValues()), self::WORDWRAP_NUMBER, "\n"),
-                $isCorrect ? '<info>✔</info>' : '<error>✗</error>'
+                $isCorrect ? '<info>✔</info>' : '<fg=red>✗</>'
             );
+
+            if ($description = $question->getDescription()) {
+                $description = preg_split('/\\n/', $description, -1, PREG_SPLIT_NO_EMPTY);
+
+                $results[] = array('<comment>   |</comment>');
+
+                foreach ($description as $line) {
+                    $results[] = array(
+                        sprintf('<comment>   | %s</comment>', /*preg_replace(['/^/', '/\\n/'], ['     | ', "     | "]*/ $line)
+                    );
+                }
+
+                if ($question !== @end($set->getQuestions())) {
+                    $results[] = array('');
+                }
+            }
         }
 
         if ($results) {
@@ -159,9 +176,13 @@ class StartCommand extends Command
 
             $tableHelper->render($output);
 
-            $output->writeln(
-                sprintf('<comment>Results</comment>: <error>errors: %s</error> - <info>correct: %s</info>', $set->getErrorsNumber(), $set->getValidNumber())
-            );
+            if ($set->getErrorsNumber() === 0) {
+                $result = sprintf('<comment>Results</comment>: ✔ 100%% (%s/%s)', $set->getValidNumber(), $set->getValidNumber());
+            } else {
+                $result = sprintf('<comment>Results</comment>: <error>errors: %s</error> - <info>correct: %s</info>', $set->getErrorsNumber(), $set->getValidNumber());
+            }
+
+            $output->writeln($result);
         }
     }
 

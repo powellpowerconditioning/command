@@ -28,18 +28,25 @@ class Question
     protected $multipleChoice;
 
     /**
+     * @var string
+     */
+    protected $description;
+
+    /**
      * Constructor
      *
      * @param string $question
      * @param string $category
      * @param array  $answers
+     * @param string $description
      */
-    public function __construct($question, $category, array $answers)
+    public function __construct($question, $category, array $answers, $description = null)
     {
         $this->question       = $question;
         $this->category       = $category;
         $this->answers        = $answers;
         $this->multipleChoice = count($this->getCorrectAnswersValues()) > 1 ? true : false;
+        $this->description = $description;
     }
 
     /**
@@ -142,5 +149,21 @@ class Question
     public function isMultipleChoice()
     {
         return $this->multipleChoice;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 }
