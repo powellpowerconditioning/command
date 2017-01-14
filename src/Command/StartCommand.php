@@ -6,6 +6,7 @@ use Certification\Core\Loader;
 use Certification\Core\Set;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -150,7 +151,7 @@ class StartCommand extends Command
         }
 
         if ($results) {
-            $tableHelper = $this->getHelper('table');
+            $tableHelper = new Table($output);
             $tableHelper
                 ->setHeaders(array('Question', 'Correct answer', 'Result'))
                 ->setRows($results)
